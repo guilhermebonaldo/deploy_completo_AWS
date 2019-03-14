@@ -1,0 +1,5 @@
+docker rm -vf $(docker ps -a -q)
+docker rmi aws-teste
+docker build -t aws-teste . 
+docker run --rm --network=host -v $(pwd)/local_test/test_dir:/opt/ml aws-teste serve
+

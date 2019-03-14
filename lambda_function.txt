@@ -1,0 +1,48 @@
+from __future__ import print_function
+
+import base64
+import json
+import csv, sys,os,time
+import boto3
+
+# nome do bucket aonde estão os dados
+bucket = 'guilherme-teste-hidrovias'
+# pasta onde estão os dados
+key = 'data/df_poda.csv'
+# nome do ednpoint criado
+endpointName = 'hidro-teste-lambda'
+
+s3 = boto3.resource('s3')
+# Talk to SageMaker
+client = boto3.client('sagemaker-runtime')
+
+
+def lambda_handler(event, context):
+    #print("Received event: " + json.dumps(event, indent=2))
+    for record in event['Records']:
+        DataHora=time.strftime("%Y-%m-%d-%H-%M-%S", time.gmtime())
+        object = s3.Object(bucket, 'responses-lambda/filename_'+DataHora+'.txt')
+        
+        # Kinesis data is base64 encoded so decode here
+        payload = base64.b64decode(record['kinesis']['data'])
+        print("Decoded payload: " + str(payload))
+        
+        print('payload:',payload)
+        
+        response = client.invoke_endpoint(
+            EndpointName=endpointName,
+            Body=payload,
+            #Body = teste,
+            ContentType='text/csv'
+            #Accept='text/csv'
+        )
+        
+        #response['Body'].read().decode('ascii')
+        result = response['Body'].read().decode('ascii')
+        dic = json.loads(result)
+        print('resposta',dic) 
+        object.put(Body=str(dic))       
+        
+        
+    print("Gerado.....")
+    return 'Successfully processed {} records.'.format(len(event['Records']))

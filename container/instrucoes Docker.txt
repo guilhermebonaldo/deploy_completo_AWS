@@ -1,0 +1,68 @@
+Criar docker portaPC:portaDOCKER
+
+sudo docker run -i -t -p 6660:8082 continuumio/anaconda3 /bin/bash
+
+
+Entrar em um docker ja criado
+sudo docker attach [id docker]
+
+
+Rodar o jupyter notebook apos entrar no docker:
+jupyter notebook --ip 0.0.0.0 --no-browser --port=8082 --allow-root
+
+
+criar senha para jupyter: 
+jupyter notebook --generate-config
+jupyter notebook password
+[escreve a senha]
+
+login
+docker login
+
+
+push
+https://medium.com/trainingcenter/docker-dockerhub-pull-e-push-nas-suas-imagens-57dffa0232ad
+
+docker push [full image name]
+download image
+docker pull [full image name]
+
+
+
+docker images - mostra todas as images
+docker 
+ps - mostra todos os containeres
+
+docker rmi [container_name] -  remove containeres taggeados
+
+
+######################################################## DELETE ALL
+
+To delete all containers including its volumes use,
+docker rm -vf $(docker ps -a -q)
+
+
+To delete all the images,
+docker rmi -f $(docker images -a -q)
+
+
+Remember, you should remove all the containers before removing all the images from which those containers were created.
+
+
+docker run -v $(pwd)/local_test/test_dir:/opt/ml xgboost-tut /bin/bash
+
+
+
+########################################### Containers 
+modelo - teste
+
+docker rm -vf $(docker ps -a -q)
+docker rmi [nome_container] 
+
+docker build -t [nome_container] .
+docker run --rm --network=host -v $(pwd)/local_test/test_dir:/opt/ml [nome_container] serve
+
+
+
+
+
